@@ -1,5 +1,9 @@
 package cn.ppps.forwarder.fragment.senders
 
+import android.content.Context
+import android.net.ConnectivityManager
+import android.net.Network
+import android.os.Build
 import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
@@ -53,6 +57,7 @@ class SmsFragment : BaseFragment<FragmentSendersSmsBinding?>(), View.OnClickList
     private var titleBar: TitleBar? = null
     private val viewModel by viewModels<SenderViewModel> { BaseViewModelFactory(context) }
     private var mCountDownHelper: CountDownButtonHelper? = null
+    private var netCallback: ConnectivityManager.NetworkCallback? = null
 
     @JvmField
     @AutoWired(name = KEY_SENDER_ID)
@@ -166,6 +171,63 @@ class SmsFragment : BaseFragment<FragmentSendersSmsBinding?>(), View.OnClickList
         binding!!.btnDel.setOnClickListener(this)
         binding!!.btnSave.setOnClickListener(this)
         LiveEventBus.get(KEY_SENDER_TEST, String::class.java).observe(this) { mCountDownHelper?.finish() }
+
+        //启用时机变化时，刷新实时网络状态提示
+        binding!!.rgFallbackMode.setOnCheckedChangeListener { _, _ -> updateNetStatus() }
+        registerNetStatusCallback()
+    }
+
+    /**
+     * 注册默认网络回调：网络变化（有网/断网）时自动刷新页面上的实时状态提示。
+     * 无需手动开关：选「仅当无网络时启用」后，有网自动跳过短信、无网自动启用。
+     */
+    private fun registerNetStatusCallback() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) return
+        try {
+            val cm = requireContext().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+            val cb = object : ConnectivityManager.NetworkCallback() {
+                override fun onAvailable(network: Network) { postUpdateNetStatus() }
+                override fun onLost(network: Network) { postUpdateNetStatus() }
+            }
+            cm.registerDefaultNetworkCallback(cb)
+            netCallback = cb
+        } catch (e: Exception) {
+            Log.e(TAG, "registerNetStatusCallback error: ${e.message}")
+        }
+    }
+
+    private fun postUpdateNetStatus() {
+        if (!isAdded || binding == null) return
+        requireActivity().runOnUiThread { updateNetStatus() }
+    }
+
+    /**
+     * 实时显示当前网络状态下短信通道的自动行为
+     */
+    private fun updateNetStatus() {
+        val b = binding ?: return
+        val mode = when (b.rgFallbackMode.checkedRadioButtonId) {
+            R.id.rb_fallback_no_network -> 1
+            R.id.rb_fallback_auto -> 2
+            else -> 0
+        }
+        if (mode == 0) {
+            b.tvNetStatus.visibility = View.GONE
+            return
+        }
+        //ping 检测可能阻塞，放子线程
+        Thread {
+            val hasNet = SmsUtils.isNetworkReallyAvailable()
+            if (!isAdded || binding == null) return@Thread
+            requireActivity().runOnUiThread {
+                val bb = binding ?: return@runOnUiThread
+                bb.tvNetStatus.visibility = View.VISIBLE
+                bb.tvNetStatus.text = when (mode) {
+                    1 -> if (hasNet) "● 当前有网络：短信通道自动关闭（不发短信），断网后自动启用" else "● 当前无网络：短信通道自动启用（发短信），联网后自动关闭"
+                    else -> if (hasNet) "● 当前有网络：短信通道待命，其他通道失败时自动改发短信" else "● 当前无网络：短信通道直接发送"
+                }
+            }
+        }.start()
     }
 
     @SingleClick
@@ -259,8 +321,24 @@ class SmsFragment : BaseFragment<FragmentSendersSmsBinding?>(), View.OnClickList
         return SmsSetting(simSlot, mobiles, onlyNoNetwork, fallbackMode)
     }
 
+    override fun onResume() {
+        super.onResume()
+        updateNetStatus()
+    }
+
     override fun onDestroyView() {
         if (mCountDownHelper != null) mCountDownHelper!!.recycle()
+        if (netCallback != null) {
+            try {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    val cm = requireContext().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+                    cm.unregisterNetworkCallback(netCallback!!)
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "unregisterNetworkCallback error: ${e.message}")
+            }
+            netCallback = null
+        }
         super.onDestroyView()
     }
 
