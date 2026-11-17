@@ -1,3 +1,6 @@
+<!-- dl-banner -->
+> **下载安装**：[下载 APK（v3.5.1，私有）](https://github.com/JLzsonit/SmsForwarder/releases/latest) · universal debug
+
 ![SmsForwarder](pic/SmsForwarder.png)
 
 # 短信转发与拦截（基于 SmsForwarder 二次开发）
