@@ -17,11 +17,15 @@ jobs:
           distribution: temurin
           java-version: '11'
 
-      - name: Generate CI signing key
+      - name: Restore signing keystore (fixed key, same signature for every build)
+        env:
+          KEYSTORE_B64: ${{ secrets.KEYSTORE_B64 }}
+          KEYSTORE_PASS: ${{ secrets.KEYSTORE_PASS }}
         run: |
           mkdir -p keystore
-          keytool -genkeypair -v -keystore keystore/app.jks -alias cicI -keyalg RSA -keysize 2048 -validity 10000 -storepass ci123456 -keypass ci123456 -dname "CN=SmsForwarder CI, OU=CI, O=CI, L=CI, ST=CI, C=CN"
-          printf 'keyAlias=cicI\nkeyPassword=ci123456\nstoreFile=../keystore/app.jks\nstorePassword=ci123456\n' > keystore/keystore.properties
+          printf '%s' "$KEYSTORE_B64" | base64 -d > keystore/app.jks
+          printf 'keyAlias=smsforwarder\nkeyPassword=%s\nstoreFile=../keystore/app.jks\nstorePassword=%s\n' "$KEYSTORE_PASS" "$KEYSTORE_PASS" > keystore/keystore.properties
+          keytool -list -v -keystore keystore/app.jks -storepass "$KEYSTORE_PASS" | grep -E "Alias name|SHA256:" || true
 
       - name: Build debug APK
         run: |
