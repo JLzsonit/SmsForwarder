@@ -200,7 +200,8 @@
     <string name="sender_logic">執行邏輯</string>
     <string name="sender_logic_all">全部執行</string>
     <string name="sender_logic_until_fail">失敗即止</string>
-    <string name="sender_logic_until_success">成功即止</string>
+    <string name="sender_logic_until_success">主備切換</string>
+    <string name="sender_logic_failover_hint">主備切換：優先使用第1條通道；第1條發送成功就不會再發第2條，只有第1條失敗（雲端報錯或無網路）才會自動改用第2條。請長按拖動，把要優先的通道排到列表第1位。</string>
     <string name="match_sim_slot">匹配卡槽</string>
     <string name="match_field">匹配字段</string>
     <string name="phone_number">手機號</string>
