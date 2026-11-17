@@ -1,12 +1,12 @@
 <!-- dl-banner -->
-> **下载安装**：[下载 APK（v3.5.1，私有）](https://github.com/JLzsonit/SmsForwarder/releases/latest) · universal debug
+> **下载安装**：[下载 APK（v3.5.1）](https://github.com/JLzsonit/SmsForwarder/releases/latest) · universal debug
 
 ![SmsForwarder](pic/SmsForwarder.png)
 
 # 短信转发与拦截（基于 SmsForwarder 二次开发）
 
 <!-- bilingual-intro -->
-**中文**：基于 pppscn/SmsForwarder（BSD-2）的二次开发：在原有短信 / 通话 / 通知转发之上，新增号码与关键词（含正则）黑名单拦截、卡槽作用域、已拦截存档页、规则导入导出等完整拦截模块。私有仓库，自用。
+**中文**：基于 pppscn/SmsForwarder（BSD-2）的二次开发：在原有短信 / 通话 / 通知转发之上，新增号码与关键词（含正则）黑名单拦截、卡槽作用域、已拦截存档页、规则导入导出等完整拦截模块。开源发布，BSD-2 继承上游。
 
 **English**: A fork of pppscn/SmsForwarder (BSD-2) that adds a complete SMS blocking module on top of the original SMS/call/notification forwarding: number and keyword (regex) blacklists, per-SIM scopes, a blocked-message archive, and rule import/export. Private repository, personal use.
 
