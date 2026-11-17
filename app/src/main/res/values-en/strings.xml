@@ -199,7 +199,8 @@
     <string name="sender_logic">Run Logic</string>
     <string name="sender_logic_all">All Run</string>
     <string name="sender_logic_until_fail">Run Until Fail</string>
-    <string name="sender_logic_until_success">Run Until Success</string>
+    <string name="sender_logic_until_success">Failover</string>
+    <string name="sender_logic_failover_hint">Failover: Use channel 1 first. If it succeeds, channel 2 is skipped; only if channel 1 fails (server error or no network) will channel 2 be used. Long-press and drag to put your preferred channel first.</string>
     <string name="match_sim_slot">SIM Slot</string>
     <string name="match_field">Field</string>
     <string name="phone_number">Phone No.</string>
