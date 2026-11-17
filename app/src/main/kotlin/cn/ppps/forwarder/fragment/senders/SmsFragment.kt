@@ -58,6 +58,7 @@ class SmsFragment : BaseFragment<FragmentSendersSmsBinding?>(), View.OnClickList
     private val viewModel by viewModels<SenderViewModel> { BaseViewModelFactory(context) }
     private var mCountDownHelper: CountDownButtonHelper? = null
     private var netCallback: ConnectivityManager.NetworkCallback? = null
+    private var syncingFallback = false
 
     @JvmField
     @AutoWired(name = KEY_SENDER_ID)
@@ -160,6 +161,8 @@ class SmsFragment : BaseFragment<FragmentSendersSmsBinding?>(), View.OnClickList
                     binding!!.etMobiles.setText(settingVo.mobiles)
                     //启用时机三选一（兼容旧版 onlyNoNetwork 开关数据）
                     binding!!.rgFallbackMode.check(settingVo.getSmsFallbackModeCheckId())
+                    //同步全自动开关的显示状态
+                    syncAutoSwitchFromRadio()
                 }
             }
         })
@@ -172,9 +175,42 @@ class SmsFragment : BaseFragment<FragmentSendersSmsBinding?>(), View.OnClickList
         binding!!.btnSave.setOnClickListener(this)
         LiveEventBus.get(KEY_SENDER_TEST, String::class.java).observe(this) { mCountDownHelper?.finish() }
 
-        //启用时机变化时，刷新实时网络状态提示
-        binding!!.rgFallbackMode.setOnCheckedChangeListener { _, _ -> updateNetStatus() }
+        //启用时机变化时，刷新实时网络状态提示；并同步全自动开关
+        binding!!.rgFallbackMode.setOnCheckedChangeListener { _, _ ->
+            if (!syncingFallback) syncAutoSwitchFromRadio()
+            updateNetStatus()
+        }
+        //全自动开关：开=仅无网络时启用，关=始终启用；与下面三选一联动
+        binding!!.sbAutoMode.setOnCheckedChangeListener { _, isChecked ->
+            if (syncingFallback) return@setOnCheckedChangeListener
+            syncingFallback = true
+            binding!!.rgFallbackMode.check(
+                if (isChecked) R.id.rb_fallback_no_network else R.id.rb_fallback_always
+            )
+            syncingFallback = false
+            updateAutoSwitchText()
+            updateNetStatus()
+        }
         registerNetStatusCallback()
+    }
+
+    /** 根据单选按钮的启用时机，同步开关的显示状态 */
+    private fun syncAutoSwitchFromRadio() {
+        val b = binding ?: return
+        val auto = b.rgFallbackMode.checkedRadioButtonId == R.id.rb_fallback_no_network
+        if (b.sbAutoMode.isChecked != auto) {
+            syncingFallback = true
+            b.sbAutoMode.isChecked = auto
+            syncingFallback = false
+        }
+        updateAutoSwitchText()
+    }
+
+    /** 更新开关下方的状态文字 */
+    private fun updateAutoSwitchText() {
+        val b = binding ?: return
+        b.tvAutoModeState.text = if (b.sbAutoMode.isChecked)
+            getString(R.string.SmsAutoModeOn) else getString(R.string.SmsAutoModeOff)
     }
 
     /**
@@ -323,6 +359,7 @@ class SmsFragment : BaseFragment<FragmentSendersSmsBinding?>(), View.OnClickList
 
     override fun onResume() {
         super.onResume()
+        syncAutoSwitchFromRadio()
         updateNetStatus()
     }
 
