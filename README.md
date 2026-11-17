@@ -5,6 +5,18 @@
 
 # 短信转发与拦截（基于 SmsForwarder 二次开发）
 
+<!-- bilingual-intro -->
+**中文**：基于 pppscn/SmsForwarder（BSD-2）的二次开发：在原有短信 / 通话 / 通知转发之上，新增号码与关键词（含正则）黑名单拦截、卡槽作用域、已拦截存档页、规则导入导出等完整拦截模块。私有仓库，自用。
+
+**English**: A fork of pppscn/SmsForwarder (BSD-2) that adds a complete SMS blocking module on top of the original SMS/call/notification forwarding: number and keyword (regex) blacklists, per-SIM scopes, a blocked-message archive, and rule import/export. Private repository, personal use.
+
+| 项目 / Item | 说明 / Note |
+|---|---|
+| 平台 / Platform | Android 8.0+ |
+| 安装 / Install | [Releases](https://github.com/JLzsonit/SmsForwarder/releases/latest) · APK（universal debug）/ APK (universal debug) |
+| 许可证 / License | BSD 2-Clause |
+
+
 > **本仓库是 [pppscn/SmsForwarder](https://github.com/pppscn/SmsForwarder)（BSD 2-Clause）的二次开发版本**，在原有短信/通话/通知转发能力之上，新增了完整的**短信拦截**模块：
 >
 > - **拦截规则**：号码黑名单 + 关键词黑名单（支持正则），**任一命中即拦截**，无需同时满足
