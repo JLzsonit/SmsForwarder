@@ -112,7 +112,6 @@
                             <RadioButton
                                 android:id="@+id/rb_sender_logic_all"
                                 style="@style/rg_rb_style"
-                                android:checked="true"
                                 android:text="@string/sender_logic_all" />
 
                             <RadioButton
@@ -123,11 +122,20 @@
                             <RadioButton
                                 android:id="@+id/rb_sender_logic_until_success"
                                 style="@style/rg_rb_style"
+                                android:checked="true"
                                 android:text="@string/sender_logic_until_success" />
 
                         </RadioGroup>
 
                     </LinearLayout>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="@string/sender_logic_failover_hint"
+                        android:textColor="?attr/xui_config_color_content_text"
+                        android:textSize="@dimen/text_size_mini" />
 
                 </LinearLayout>
 
