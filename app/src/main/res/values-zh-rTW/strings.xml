@@ -338,6 +338,9 @@
 <string name="OnlyNoNetwork">僅當無網路時啟用</string>
     <string name="SmsFallbackAlways">始終啟用（每條都發簡訊）</string>
     <string name="SmsFallbackAuto">自動降級（有網路優先網路通道，失敗或無網路時才發簡訊）</string>
+    <string name="SmsAutoModeSwitch">全自動模式（有網自動關 / 無網自動開）</string>
+    <string name="SmsAutoModeOn">開關：已開啟 · 全自動，無需手動切換</string>
+    <string name="SmsAutoModeOff">開關：已關閉 · 始終啟用簡訊</string>
     <string name="SmsFallbackAutoTips">提示：選「自動降級」後，網路可用時本通道自動待命；同一條訊息的其他轉發通道全部失敗（或沒有網路）時，才會自動改用簡訊發送，無需手動開關。</string>
     <string name="SmsAutoStandby">自動降級：目前網路可用，簡訊通道待命（其他通道失敗時自動補發）</string>
     <string name="SmsAutoFallbackTriggered">自動降級觸發：其他通道未成功，改用簡訊發送</string>
