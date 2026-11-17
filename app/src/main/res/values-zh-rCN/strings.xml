@@ -338,6 +338,9 @@
 <string name="OnlyNoNetwork">仅当无网络时启用</string>
     <string name="SmsFallbackAlways">始终启用（每条都发短信）</string>
     <string name="SmsFallbackAuto">自动降级（有网络优先网络通道，失败或无网络时才发短信）</string>
+    <string name="SmsAutoModeSwitch">全自动模式（有网自动关 / 无网自动开）</string>
+    <string name="SmsAutoModeOn">开关：已开启 · 全自动，无需手动切换</string>
+    <string name="SmsAutoModeOff">开关：已关闭 · 始终启用短信</string>
     <string name="SmsFallbackAutoTips">提示：选「自动降级」后，网络可用时本通道自动待命；同一条消息的其他转发通道全部失败（或没有网络）时，才会自动改用短信发送，无需手动开关。</string>
     <string name="SmsAutoStandby">自动降级：当前网络可用，短信通道待命（其他通道失败时自动补发）</string>
     <string name="SmsAutoFallbackTriggered">自动降级触发：其他通道未成功，改用短信发送</string>
