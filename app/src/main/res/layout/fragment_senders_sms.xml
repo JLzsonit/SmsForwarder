@@ -173,6 +173,18 @@
                     android:textSize="@dimen/text_size_mini"
                     tools:ignore="SmallSp" />
 
+                <TextView
+                    android:id="@+id/tv_net_status"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:textColor="#1E88E5"
+                    android:textSize="@dimen/text_size_mini"
+                    android:textStyle="bold"
+                    android:visibility="gone"
+                    tools:ignore="SmallSp"
+                    tools:text="● 当前有网络：短信通道自动关闭（不发短信）" />
+
             </LinearLayout>
 
         </LinearLayout>
