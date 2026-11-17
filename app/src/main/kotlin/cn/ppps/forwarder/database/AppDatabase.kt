@@ -30,7 +30,7 @@ import cn.ppps.forwarder.utils.TAG_LIST
 @Database(
     entities = [Frpc::class, Msg::class, Logs::class, Rule::class, Sender::class, Task::class, SmsIntercepted::class],
     views = [LogsDetail::class],
-    version = 22,
+    version = 23,
     exportSchema = false
 )
 @TypeConverters(ConvertersDate::class)
@@ -116,6 +116,7 @@ custom_domains = smsf.demo.com
                     MIGRATION_19_20,
                     MIGRATION_20_21,
                     MIGRATION_21_22,
+                    MIGRATION_22_23,
                 )
 
             /*if (BuildConfig.DEBUG) {
@@ -488,6 +489,15 @@ CREATE TABLE IF NOT EXISTS "SmsIntercepted" (
 """.trimIndent()
                 )
                 database.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS \"index_SmsIntercepted_id\" ON \"SmsIntercepted\" ( \"id\" ASC)")
+            }
+        }
+
+        //3.5.8: 把旧的"全部执行"(ALL)规则统一升级为"主备切换"(UntilSuccess)
+        //       —— 优先第1条通道，成功则不发备用，失败才自动转第2条。
+        //       用户仍可在规则编辑里手动改回"全部执行"。
+        private val MIGRATION_22_23 = object : Migration(22, 23) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("UPDATE \"Rule\" SET \"sender_logic\" = 'UntilSuccess' WHERE \"sender_logic\" = 'ALL'")
             }
         }
 
