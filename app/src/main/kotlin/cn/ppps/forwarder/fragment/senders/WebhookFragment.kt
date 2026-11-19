@@ -88,6 +88,9 @@ class WebhookFragment : BaseFragment<FragmentSendersWebhookBinding?>(), View.OnC
      * 初始化控件
      */
     override fun initViews() {
+        //消息模板占位符按钮：点击插入 [from]/[msg] 等 Webhook 可识别的占位符
+        CommonUtils.createWebhookTagButtons(requireContext(), binding!!.glWebParamsTags, binding!!.etWebParams)
+
         //测试按钮增加倒计时，避免重复点击
         mCountDownHelper = CountDownButtonHelper(binding!!.btnTest, SettingUtils.requestTimeout)
         mCountDownHelper!!.setOnCountDownListener(object : CountDownButtonHelper.OnCountDownListener {
