@@ -663,6 +663,7 @@
     <string name="webhook_server">Webhook Server</string>
     <string name="webhook_server_tips">例如：https://a.b.com/msg?token=xyz</string>
     <string name="webhook_params">消息模板</string>
+    <string name="webhook_params_tag_tips">點擊下方按鈕插入變數，可自由拼接、自訂訊息模板（插入後傳送時會自動替換為真實內容）</string>
     <string name="webhook_params_tips" formatted="false">例如：payload=%7B%22text%22%3A%22[msg]%22%7D [msg]將被替換成簡訊內容。\n支持Json格式，例如：{\"text\":\"[msg]\"}。\n注意：除JSON格式外，msg會自動進行URLEncoder</string>
     <string name="webhook_secret">Secret：置空則不計算sign</string>
     <string name="webhook_response">成功應答關鍵字：置空則http狀態200即為成功</string>
