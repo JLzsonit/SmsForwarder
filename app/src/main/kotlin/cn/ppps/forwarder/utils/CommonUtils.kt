@@ -419,6 +419,56 @@ class CommonUtils private constructor() {
 
         }
 
+        // Webhook 消息模板专用占位符按钮：点击后将 Webhook 可识别的 [xxx] 占位符插入光标处
+        // 注意：Webhook 发送时(WebhookUtils)实际替换的是 [from]/[msg]/[device_mark] 等单中括号格式，
+        // 与短信规则的 {{FROM}} 双花括号不同，故单独提供一套，确保点按钮插入后能被正确替换。
+        fun createWebhookTagButtons(context: Context, gridLayout: GridLayout, editText: EditText) {
+            gridLayout.removeAllViews()
+
+            // key = 插入模板的占位符(WebhookUtils 发送时实际替换的格式)
+            // value = 按钮显示文字(复用已有多语言字符串)
+            val webhookTags = linkedMapOf(
+                "[from]" to context.getString(R.string.insert_tag_from),
+                "[msg]" to context.getString(R.string.insert_tag_sms),
+                "[device_mark]" to context.getString(R.string.insert_tag_device_name),
+                "[receive_time]" to context.getString(R.string.insert_tag_receive_time),
+                "[timestamp]" to context.getString(R.string.insert_tag_current_time),
+                "[title]" to context.getString(R.string.insert_tag_rule_title),
+                "[card_slot]" to context.getString(R.string.insert_tag_card_slot),
+                "[app_version]" to context.getString(R.string.insert_tag_app_version)
+            )
+
+            val btnBackground = getDrawable(R.drawable.rounded_button)
+            val btnTextColor = getColor(android.R.color.white)
+
+            webhookTags.forEach { (tag, label) ->
+                val button = TextView(context).apply {
+                    text = label
+                    setOnClickListener {
+                        insertOrReplaceText2Cursor(editText, tag)
+                    }
+                    setTextSize(TypedValue.COMPLEX_UNIT_SP, 9f)
+                    maxLines = 1
+                    ellipsize = TextUtils.TruncateAt.END
+                    setPadding(5, 5, 5, 5)
+                    gravity = android.view.Gravity.CENTER
+                    background = btnBackground
+                    setTextColor(btnTextColor)
+                    layoutParams = GridLayout.LayoutParams().apply {
+                        height = GridLayout.LayoutParams.WRAP_CONTENT
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                            width = 0
+                            columnSpec = GridLayout.spec(GridLayout.UNDEFINED, 1f)
+                        } else {
+                            width = GridLayout.LayoutParams.WRAP_CONTENT
+                        }
+                        setMargins(8, 8, 8, 8)
+                    }
+                }
+                gridLayout.addView(button)
+            }
+        }
+
     }
 
     init {
