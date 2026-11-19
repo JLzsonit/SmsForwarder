@@ -167,6 +167,22 @@
                     android:text=""
                     tools:ignore="RtlHardcoded,SpeakableTextPresentCheck" />
 
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="@string/webhook_params_tag_tips"
+                    android:textSize="@dimen/text_size_mini"
+                    tools:ignore="SmallSp" />
+
+                <GridLayout
+                    android:id="@+id/gl_webParams_tags"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:columnCount="4"
+                    android:orientation="horizontal" />
+
             </LinearLayout>
 
             <LinearLayout
