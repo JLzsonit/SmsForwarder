@@ -183,36 +183,65 @@ class WebhookUtils {
                     if (!TextUtils.isEmpty(sign)) webParams += "&sign=[sign]"
                 }
                 Log.d(TAG, "method = ${setting.method}, Url = $requestUrl")
-                val postRequest = when (setting.method) {
-                    "PUT" -> XHttp.put(requestUrl).keepJson(true)
-                    "PATCH" -> XHttp.patch(requestUrl).keepJson(true)
-                    else -> XHttp.post(requestUrl).keepJson(true)
-                }
-                webParams = msgInfo.replaceTemplate(webParams, "", "", rule?.title ?: "")
-                webParams.trim('&').split("&").forEach {
-                    val sepIndex = it.indexOf("=")
-                    if (sepIndex != -1) {
-                        val key = it.substring(0, sepIndex).trim()
-                        val value = it.substring(sepIndex + 1).trim()
-                        postRequest.params(
-                            key, value.replace("[from]", from)
-                                .replace("[content]", content)
-                                .replace("[msg]", content)
-                                .replace("[org_content]", orgContent)
-                                .replace("[device_mark]", deviceMark)
-                                .replace("[app_version]", appVersion)
-                                .replace("[title]", simInfo)
-                                .replace("[card_slot]", simInfo)
-                                .replace(receiveTimeTag) { t ->
-                                    val format = t.groups[2]?.value
-                                    formatDateTime(msgInfo.date, format)
-                                }
-                                .replace("[timestamp]", timestamp.toString())
-                                .replace("[sign]", sign)
-                        )
+
+                // 纯文本模板(不含 = 号)：整体替换变量后作为请求正文发送。
+                // 之前无论什么内容都按 key=value&... 表单解析，纯文本模板没有 = 号会被整段跳过，
+                // 导致发出去的是空正文、变量没被替换(接收端显示"未知号码")。这里专门处理这种情况。
+                if (!webParams.contains("=")) {
+                    var bodyMsg = msgInfo.replaceTemplate(webParams, "", "", rule?.title ?: "")
+                    bodyMsg = bodyMsg.replace("[from]", from)
+                        .replace("[content]", content)
+                        .replace("[msg]", content)
+                        .replace("[org_content]", orgContent)
+                        .replace("[device_mark]", deviceMark)
+                        .replace("[app_version]", appVersion)
+                        .replace("[title]", simInfo)
+                        .replace("[card_slot]", simInfo)
+                        .replace(receiveTimeTag) { t ->
+                            val format = t.groups[2]?.value
+                            formatDateTime(msgInfo.date, format)
+                        }
+                        .replace("[timestamp]", timestamp.toString())
+                        .replace("[sign]", sign)
+                    Log.d(TAG, "method = ${setting.method}, plain text bodyMsg = $bodyMsg")
+                    when (setting.method) {
+                        "PUT" -> XHttp.put(requestUrl).keepJson(true).upString(bodyMsg, "text/plain")
+                        "PATCH" -> XHttp.patch(requestUrl).keepJson(true).upString(bodyMsg, "text/plain")
+                        else -> XHttp.post(requestUrl).keepJson(true).upString(bodyMsg, "text/plain")
                     }
+                } else {
+                    // 原有 key=value 表单写法，保持不变
+                    val postRequest = when (setting.method) {
+                        "PUT" -> XHttp.put(requestUrl).keepJson(true)
+                        "PATCH" -> XHttp.patch(requestUrl).keepJson(true)
+                        else -> XHttp.post(requestUrl).keepJson(true)
+                    }
+                    webParams = msgInfo.replaceTemplate(webParams, "", "", rule?.title ?: "")
+                    webParams.trim('&').split("&").forEach {
+                        val sepIndex = it.indexOf("=")
+                        if (sepIndex != -1) {
+                            val key = it.substring(0, sepIndex).trim()
+                            val value = it.substring(sepIndex + 1).trim()
+                            postRequest.params(
+                                key, value.replace("[from]", from)
+                                    .replace("[content]", content)
+                                    .replace("[msg]", content)
+                                    .replace("[org_content]", orgContent)
+                                    .replace("[device_mark]", deviceMark)
+                                    .replace("[app_version]", appVersion)
+                                    .replace("[title]", simInfo)
+                                    .replace("[card_slot]", simInfo)
+                                    .replace(receiveTimeTag) { t ->
+                                        val format = t.groups[2]?.value
+                                        formatDateTime(msgInfo.date, format)
+                                    }
+                                    .replace("[timestamp]", timestamp.toString())
+                                    .replace("[sign]", sign)
+                            )
+                        }
+                    }
+                    postRequest
                 }
-                postRequest
             }
 
             //添加headers
