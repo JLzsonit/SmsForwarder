@@ -1,5 +1,5 @@
 <!-- dl-banner -->
-> **下载安装**：[下载 APK（v3.5.8 · 主备切换优先第1条）](https://github.com/JLzsonit/SmsForwarder/releases/latest) · universal debug
+> **下载安装**：[下载 APK（v3.5.9 · Webhook模板点选变量）](https://github.com/JLzsonit/SmsForwarder/releases/latest) · universal debug
 
 ![SmsForwarder](pic/SmsForwarder.png)
 
